@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  guacd:
+    image: guacamole/guacd:latest
+    container_name: guacd
+    restart: always
+
+  guacamole:
+    image: guacamole/guacamole:latest
+    container_name: guacamole
+    environment:
+      - GUACD_HOSTNAME=guacd
+      - GUACAMOLE_HOME=/config
+    volumes:
+      - ./config:/config
+    links:
+      - guacd:guacd
+    ports:
+      - "8080:8080"
+    restart: always
+    
+  auth-totp:
+    image: guacamole/guacamole-auth-totp:latest
+    container_name: guacamole-auth-totp
+    environment:
+      - GUACAMOLE_HOME=/config
+    volumes:
+      - ./config:/config
+    links:
+      - guacamole:guacamole
+    restart: always
